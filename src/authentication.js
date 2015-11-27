@@ -1,5 +1,4 @@
 import {go2Login} from './actions'
-import {connect} from 'react-redux'
 
 const Authentication = Component => {
   class AuthComponent extends Component {
@@ -8,11 +7,9 @@ const Authentication = Component => {
     }
     componentWillMount() {
       this.authenticate()
-      super.componentWillMount()
     }
     componentWillReceiveProps(nextProps) {
       this.authenticate()
-      super.componentWillReceiveProps(nextProps)
     }
     authenticate() {
       const {dispatch, isAuthenticated} = this.props
@@ -21,11 +18,11 @@ const Authentication = Component => {
       }
       dispatch(go2Login())
     }
+    render() {
+      return this.props.isAuthenticated ? super.render() : null
+    }
   }
-  const connector = connect(state => ({
-    isAuthenticated: state.isAuthenticated,
-  }))
-  return connector(AuthComponent)
+  return AuthComponent
 }
 
 export default Authentication

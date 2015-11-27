@@ -27,9 +27,12 @@ authentication component for redux
 
 ```js
 import {Authentication} from 'redux-authentication'
-
+import {connect} from 'react-redux'
 import React, { PropTypes } from 'react'
 
+@connect(state => ({
+  isAuthenticated: state.isAuthenticated
+}))
 @Authentication
 class App extends React.Component {
   render () {
