@@ -7,7 +7,6 @@ import {
 } from 'react-addons-test-utils'
 
 import authentication from '../authentication'
-import {types} from '../actions'
 
 class AppComponent extends React.Component {
   render() {
@@ -20,9 +19,16 @@ class AppComponent extends React.Component {
   }
 }
 
+const goToLogin = payload => ({
+  type: 'GO_TO_LOGIN',
+  payload,
+})
+
 const App = connect(state => ({
   isAuthenticated: state.isAuthenticated,
-}))(authentication(AppComponent))
+}), {
+  goToLogin,
+})(authentication(AppComponent))
 
 const renderApp = (isAuthenticated) => {
   const reducer = combineReducers({
@@ -43,8 +49,8 @@ describe('Authentication', () => {
   describe('with un-authenticated state', () => {
     const isAuthenticated = (state = false, action) => {
       switch (action.type) {
-      case types.GO_TO_LOGIN:
-        expect(action.type).to.be.equal(types.GO_TO_LOGIN)
+      case 'GO_TO_LOGIN':
+        expect(true).to.be.equal(true)
         return state
       default:
         return state
@@ -59,7 +65,7 @@ describe('Authentication', () => {
   describe('with authenticated state', () => {
     const isAuthenticated = (state = true, action) => {
       switch (action.type) {
-      case types.GO_TO_LOGIN:
+      case 'GO_TO_LOGIN':
         expect(true).to.be.equal(false)
         return state
       default:

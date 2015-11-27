@@ -1,2 +1,1 @@
-export const Authentication = require('./authentication')
-export const actions = require('./actions')
+export default require('./authentication')

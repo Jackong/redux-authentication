@@ -1,5 +1,3 @@
-import {go2Login} from './actions'
-
 const Authentication = Component => {
   class AuthComponent extends Component {
     constructor(props) {
@@ -12,11 +10,15 @@ const Authentication = Component => {
       this.authenticate()
     }
     authenticate() {
-      const {dispatch, isAuthenticated} = this.props
+      const {isAuthenticated, goToLogin, actions} = this.props
       if (isAuthenticated) {
         return
       }
-      dispatch(go2Login())
+      if (goToLogin) {
+        goToLogin()
+        return
+      }
+      actions.goToLogin()
     }
     render() {
       return this.props.isAuthenticated ? super.render() : null

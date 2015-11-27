@@ -29,10 +29,13 @@ authentication component for redux
 import {Authentication} from 'redux-authentication'
 import {connect} from 'react-redux'
 import React, { PropTypes } from 'react'
+import {goToLogin} from 'your-actions'
 
 @connect(state => ({
   isAuthenticated: state.isAuthenticated
-}))
+}), {
+  goToLogin,//map to props.goToLogin props.actions.goToLogin
+})
 @Authentication
 class App extends React.Component {
   render () {
