@@ -26,7 +26,7 @@ authentication component for redux
 # Examples
 
 ```js
-import {Authentication} from 'redux-authentication'
+import Authentication from 'redux-authentication'
 import {connect} from 'react-redux'
 import React, { PropTypes } from 'react'
 import {goToLogin} from 'your-actions'

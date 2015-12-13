@@ -1,1 +1,1 @@
-export default require('./authentication')
+export { default as default} from './authentication'
