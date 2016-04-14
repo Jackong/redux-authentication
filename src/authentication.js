@@ -4,13 +4,13 @@ const Authentication = Component => {
       super(props)
     }
     componentWillMount() {
-      this.authenticate()
+      this.authenticate(this.props)
     }
     componentWillReceiveProps(nextProps) {
-      this.authenticate()
+      this.authenticate(nextProps)
     }
-    authenticate() {
-      const {isAuthenticated, goToLogin, actions} = this.props
+    authenticate(props) {
+      const {isAuthenticated, goToLogin, actions} = props
       if (isAuthenticated) {
         return
       }
