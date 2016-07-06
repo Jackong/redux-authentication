@@ -34,11 +34,21 @@ import {goToLogin} from 'your-actions'
 @connect(state => ({
   isAuthenticated: state.isAuthenticated
 }), {
-  goToLogin,//map to props.goToLogin props.actions.goToLogin
+  goToLogin,//map to props.goToLogin OR props.actions.goToLogin
 })
 @Authentication
 class App extends React.Component {
-  render () {
+  componentDidMount() {
+    // will be called until isAuthenticated is updated to true
+  }
+  componentDidMount() {
+    // will be called until isAuthenticated is updated to true
+  }
+  componentWillReceiveProps(nextProps) {
+    // will be called until isAuthenticated is updated to true
+  }
+  render() {
+    // will be called until isAuthenticated is updated to true
     return (
       <div>
         App

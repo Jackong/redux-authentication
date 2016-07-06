@@ -1,16 +1,17 @@
-import jsdom from 'mocha-jsdom'
+import sinon from 'sinon'
 import React from 'react'
-import {combineReducers, createStore} from 'redux'
-import {Provider, connect} from 'react-redux'
-import {
-  renderIntoDocument,
-} from 'react-addons-test-utils'
+import { mount } from 'enzyme'
 
 import authentication from '../authentication'
 
 class AppComponent extends React.Component {
+  componentWillMount() {
+  }
+  componentDidMount() {
+  }
+  componentWillReceiveProps() {
+  }
   render() {
-    expect(this.props.isAuthenticated).to.be.equal(true)
     return (
       <div>
         App
@@ -18,63 +19,61 @@ class AppComponent extends React.Component {
     )
   }
 }
-
-const goToLogin = payload => ({
-  type: 'GO_TO_LOGIN',
-  payload,
-})
-
-const App = connect(state => ({
-  isAuthenticated: state.isAuthenticated,
-}), {
-  goToLogin,
-})(authentication(AppComponent))
-
-const renderApp = (isAuthenticated) => {
-  const reducer = combineReducers({
-    isAuthenticated,
-  })
-
-  const store = createStore(reducer)
-
-  return renderIntoDocument(
-    <Provider store={store}>
-      <App />
-    </Provider>
-  )
-}
+const App = authentication(AppComponent)
 
 describe('Authentication', () => {
-  jsdom()
-  describe('with un-authenticated state', () => {
-    const isAuthenticated = (state = false, action) => {
-      switch (action.type) {
-      case 'GO_TO_LOGIN':
-        expect(true).to.be.equal(true)
-        return state
-      default:
-        return state
-      }
-    }
-
-    it('should be ok', () => {
-      renderApp(isAuthenticated)
-    })
+  beforeEach(() => {
+    sinon.restore()
   })
 
-  describe('with authenticated state', () => {
-    const isAuthenticated = (state = true, action) => {
-      switch (action.type) {
-      case 'GO_TO_LOGIN':
-        expect(true).to.be.equal(false)
-        return state
-      default:
-        return state
-      }
-    }
-
+  describe('with authentication flow', () => {
     it('should be ok', () => {
-      renderApp(isAuthenticated)
+      const goToLogin = sinon.spy()
+      const cwm = sinon.spy(AppComponent.prototype, 'componentWillMount')
+      const cdm = sinon.spy(AppComponent.prototype, 'componentDidMount')
+      const cwr = sinon.spy(AppComponent.prototype, 'componentWillReceiveProps')
+      const render = sinon.spy(AppComponent.prototype, 'render')
+      const authenticate = sinon.spy(App.prototype, 'authenticate')
+
+
+      // from unauthenticated status
+      const wrapper = mount(
+        <App isAuthenticated={false} goToLogin={goToLogin} />
+      )
+
+      expect(cwm.callCount).to.be.equal(0)
+      expect(cdm.callCount).to.be.equal(0)
+      expect(cwr.callCount).to.be.equal(0)
+      expect(render.callCount).to.be.equal(0)
+      expect(authenticate.callCount).to.be.equal(1)
+
+      expect(goToLogin.callCount).to.be.equal(1)
+
+      //  to authenticated status
+      wrapper.setProps({ isAuthenticated: true })
+
+      expect(cwm.callCount).to.be.equal(1)
+      expect(cdm.callCount).to.be.equal(1)
+      expect(cwr.callCount).to.be.equal(1)
+      expect(render.callCount).to.be.equal(1)
+      expect(authenticate.callCount).to.be.equal(2)
+
+      //  keeping called once
+      expect(goToLogin.callCount).to.be.equal(1)
+
+      // and back to unauthenticated status
+      wrapper.setProps({ isAuthenticated: false })
+
+      expect(cwm.callCount).to.be.equal(1)
+      expect(cdm.callCount).to.be.equal(1)
+      expect(cwr.callCount).to.be.equal(1)
+      expect(render.callCount).to.be.equal(1)
+
+      // should call authenticate
+      expect(authenticate.callCount).to.be.equal(3)
+
+      // should go to login again
+      expect(goToLogin.callCount).to.be.equal(2)
     })
   })
 })
