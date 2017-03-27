@@ -26,7 +26,7 @@ authentication component for redux
 # Examples
 
 ```js
-import Authentication from 'redux-authentication'
+import authentication from 'redux-authentication'
 import {connect} from 'react-redux'
 import React, { PropTypes } from 'react'
 import {goToLogin} from 'your-actions'
@@ -36,19 +36,10 @@ import {goToLogin} from 'your-actions'
 }), {
   goToLogin,//map to props.goToLogin OR props.actions.goToLogin
 })
-@Authentication
+@authentication
 class App extends React.Component {
-  componentDidMount() {
-    // will be called until isAuthenticated is updated to true
-  }
-  componentDidMount() {
-    // will be called until isAuthenticated is updated to true
-  }
-  componentWillReceiveProps(nextProps) {
-    // will be called until isAuthenticated is updated to true
-  }
+  // will be called until isAuthenticated is updated to true
   render() {
-    // will be called until isAuthenticated is updated to true
     return (
       <div>
         App
