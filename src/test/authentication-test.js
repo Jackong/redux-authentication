@@ -4,7 +4,7 @@ import { mount } from 'enzyme'
 
 import authentication from '../authentication'
 
-class AppComponent extends React.Component {
+class App extends React.Component {
   componentWillMount() {
   }
   componentDidMount() {
@@ -19,7 +19,7 @@ class AppComponent extends React.Component {
     )
   }
 }
-const App = authentication(AppComponent)
+const AppWithAuth = authentication(App)
 
 describe('Authentication', () => {
   beforeEach(() => {
@@ -29,16 +29,16 @@ describe('Authentication', () => {
   describe('with authentication flow', () => {
     it('should be ok', () => {
       const goToLogin = sinon.spy()
-      const cwm = sinon.spy(AppComponent.prototype, 'componentWillMount')
-      const cdm = sinon.spy(AppComponent.prototype, 'componentDidMount')
-      const cwr = sinon.spy(AppComponent.prototype, 'componentWillReceiveProps')
-      const render = sinon.spy(AppComponent.prototype, 'render')
-      const authenticate = sinon.spy(App.prototype, 'authenticate')
+      const cwm = sinon.spy(App.prototype, 'componentWillMount')
+      const cdm = sinon.spy(App.prototype, 'componentDidMount')
+      const cwr = sinon.spy(App.prototype, 'componentWillReceiveProps')
+      const render = sinon.spy(App.prototype, 'render')
+      const authenticate = sinon.spy(AppWithAuth.prototype, 'authenticate')
 
 
       // from unauthenticated status
       const wrapper = mount(
-        <App isAuthenticated={false} goToLogin={goToLogin} />
+        <AppWithAuth isAuthenticated={false} goToLogin={goToLogin} />
       )
 
       expect(cwm.callCount).to.be.equal(0)
@@ -54,12 +54,24 @@ describe('Authentication', () => {
 
       expect(cwm.callCount).to.be.equal(1)
       expect(cdm.callCount).to.be.equal(1)
-      expect(cwr.callCount).to.be.equal(1)
+      expect(cwr.callCount).to.be.equal(0)
       expect(render.callCount).to.be.equal(1)
       expect(authenticate.callCount).to.be.equal(2)
 
       //  keeping called once
       expect(goToLogin.callCount).to.be.equal(1)
+
+      // set others props
+      wrapper.setProps({ user: {} })
+      expect(cwm.callCount).to.be.equal(1)
+      expect(cdm.callCount).to.be.equal(1)
+      expect(cwr.callCount).to.be.equal(1)
+
+      // will re-render
+      expect(render.callCount).to.be.equal(2)
+
+      // should call authenticate to check
+      expect(authenticate.callCount).to.be.equal(3)
 
       // and back to unauthenticated status
       wrapper.setProps({ isAuthenticated: false })
@@ -67,10 +79,10 @@ describe('Authentication', () => {
       expect(cwm.callCount).to.be.equal(1)
       expect(cdm.callCount).to.be.equal(1)
       expect(cwr.callCount).to.be.equal(1)
-      expect(render.callCount).to.be.equal(1)
+      expect(render.callCount).to.be.equal(2)
 
       // should call authenticate
-      expect(authenticate.callCount).to.be.equal(3)
+      expect(authenticate.callCount).to.be.equal(4)
 
       // should go to login again
       expect(goToLogin.callCount).to.be.equal(2)

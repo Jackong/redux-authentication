@@ -1,34 +1,14 @@
-const Authentication = Component => {
-  class AuthComponent extends Component {
+import React, { PropTypes } from 'react'
+
+const authentication = Component => {
+  class Authentication extends React.Component {
     constructor(props) {
       super(props)
       this.isAuthenticating = false
       this.authenticate(this.props)
     }
-    componentWillMount() {
-      if (this.props.isAuthenticated && super.componentWillMount) {
-        super.componentWillMount()
-      }
-    }
-    componentDidMount() {
-      if (this.props.isAuthenticated && super.componentDidMount) {
-        super.componentDidMount()
-      }
-    }
     componentWillReceiveProps(nextProps) {
-      if (!this.authenticate(nextProps)) {
-        return
-      }
-      const canReplay = this.props.isAuthenticated !== nextProps.isAuthenticated
-      if (canReplay && super.componentWillMount) {
-        super.componentWillMount()
-      }
-      if (super.componentWillReceiveProps) {
-        super.componentWillReceiveProps(nextProps)
-      }
-      if (canReplay && super.componentDidMount) {
-        super.componentDidMount()
-      }
+      this.authenticate(nextProps)
     }
     authenticate({ isAuthenticated, goToLogin, actions }) {
       if (isAuthenticated) {
@@ -53,10 +33,19 @@ const Authentication = Component => {
       return false
     }
     render() {
-      return this.props.isAuthenticated ? super.render() : null
+      if (!this.props.isAuthenticated) {
+        return null
+      }
+      return (
+        <Component {...this.props} />
+      )
     }
   }
-  return AuthComponent
+  Authentication.propTypes = {
+    isAuthenticated: PropTypes.bool,
+  }
+  Authentication.displayName = `Authentication(${Component.displayName || Component.name})`
+  return Authentication
 }
 
-export default Authentication
+export default authentication
